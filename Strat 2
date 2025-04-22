@@ -1,21 +1,157 @@
 openapi: 3.1.0
 info:
-  title: API Analytique Stratégique Avancée
-  version: 1.0.0
+  title: API Designer de Business Model
+  version: 1.0.1
   description: >
-    Module complémentaire à l’API Analyste Stratégique d’Entreprise.
-    Permet de générer des matrices BCG, analyser la concurrence, visualiser un business model canvas,
-    détecter les signaux faibles, et évaluer la maturité stratégique.
+    Ce module complète l'Analyste Stratégique GPT. Il permet de modéliser le modèle économique
+    d'une entreprise ou d'une startup à travers un Business Model Canvas, Lean Canvas,
+    proposition de valeur et pistes d'innovation.
 
 servers:
-  - url: https://api.strategie-gpt.com/v1
-    description: Serveur secondaire – Analytique stratégique complémentaire
+  - url: https://api.businessmodel-gpt.com/v1
+    description: "Serveur de modélisation stratégique"
 
 paths:
-  /analyse-concurrence:
+  /business-model-canvas:
     post:
-      operationId: analyserConcurrence
-      summary: Analyse structurée de la concurrence
+      operationId: genererBusinessModelCanvas
+      summary: "Générer un Business Model Canvas complet"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - idee
+              properties:
+                idee:
+                  type: string
+                  description: "Idée ou description de l’entreprise. Exemple : 'Application de gestion agricole connectée'"
+                cible:
+                  type: string
+                  description: "Cible principale. Exemple : 'agriculteurs en Afrique de l’Ouest'"
+      responses:
+        '200':
+          description: "Business Model Canvas généré"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  segmentsClients:
+                    type: string
+                  propositionValeur:
+                    type: string
+                  canaux:
+                    type: string
+                  relationsClients:
+                    type: string
+                  sourcesRevenus:
+                    type: string
+                  ressourcesCles:
+                    type: string
+                  activitesCles:
+                    type: string
+                  partenairesCles:
+                    type: string
+                  structureCouts:
+                    type: string
+        '400':
+          description: "Requête invalide"
+        '500':
+          description: "Erreur serveur"
+
+  /lean-canvas:
+    post:
+      operationId: genererLeanCanvas
+      summary: "Générer un Lean Canvas pour une idée early-stage"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - idee
+              properties:
+                idee:
+                  type: string
+                  description: "Idée de projet ou startup. Exemple : 'Solution SaaS de gestion d'inventaire pour PME africaines'"
+      responses:
+        '200':
+          description: "Lean Canvas généré"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  probleme:
+                    type: string
+                  solution:
+                    type: string
+                  propositionValeurUnique:
+                    type: string
+                  avantagesInjustes:
+                    type: string
+                  segmentsClients:
+                    type: string
+                  canaux:
+                    type: string
+                  revenus:
+                    type: string
+                  couts:
+                    type: string
+                  indicateursCles:
+                    type: string
+        '400':
+          description: "Champ manquant"
+        '500':
+          description: "Erreur serveur"
+
+  /proposition-valeur:
+    post:
+      operationId: genererPropositionValeur
+      summary: "Formuler une proposition de valeur claire et convaincante"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cible
+                - probleme
+                - solution
+              properties:
+                cible:
+                  type: string
+                  description: "Public cible. Exemple : 'entreprises agroalimentaires rurales'"
+                probleme:
+                  type: string
+                  description: "Problème client observé"
+                solution:
+                  type: string
+                  description: "Offre ou solution proposée"
+      responses:
+        '200':
+          description: "Proposition de valeur générée"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  proposition:
+                    type: string
+        '400':
+          description: "Informations manquantes"
+        '500':
+          description: "Erreur serveur"
+
+  /innovations-business-model:
+    post:
+      operationId: suggererInnovationsModel
+      summary: "Suggérer des pistes d’innovation de modèle économique"
       requestBody:
         required: true
         content:
@@ -24,209 +160,23 @@ paths:
               type: object
               required:
                 - secteur
-                - concurrents
               properties:
                 secteur:
                   type: string
-                  description: "Secteur ciblé. Ex : 'Mobilité urbaine en Afrique'"
-                concurrents:
-                  type: array
-                  description: "Liste des concurrents principaux"
-                  items:
-                    type: string
+                  description: "Secteur ou domaine d’activité. Exemple : 'éducation numérique'"
       responses:
         '200':
-          description: Analyse concurrentielle synthétique
+          description: "Liste d’innovations business model"
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  mappingPositionnement:
-                    type: string
-                  avantagesComparatifs:
-                    type: array
-                    items:
-                      type: string
-                  risques:
+                  axesInnovation:
                     type: array
                     items:
                       type: string
         '400':
-          description: Données manquantes
+          description: "Secteur non précisé"
         '500':
-          description: Erreur serveur
-
-  /matrice-bcg:
-    post:
-      operationId: genererMatriceBCG
-      summary: Générer une matrice BCG à partir d’un portefeuille de produits
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - produits
-              properties:
-                produits:
-                  type: array
-                  items:
-                    type: object
-                    required:
-                      - nom
-                      - partDeMarche
-                      - croissanceMarche
-                    properties:
-                      nom:
-                        type: string
-                      partDeMarche:
-                        type: number
-                      croissanceMarche:
-                        type: number
-      responses:
-        '200':
-          description: Matrice BCG classifiée
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  etoiles:
-                    type: array
-                    items:
-                      type: string
-                  dilemmes:
-                    type: array
-                    items:
-                      type: string
-                  vachesALait:
-                    type: array
-                    items:
-                      type: string
-                  poidsMorts:
-                    type: array
-                    items:
-                      type: string
-        '400':
-          description: Format de produit invalide
-        '500':
-          description: Erreur serveur
-
-  /bmc:
-    post:
-      operationId: genererBusinessModelCanvas
-      summary: Générer un Business Model Canvas (BMC)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - nomProjet
-              properties:
-                nomProjet:
-                  type: string
-                descriptionProjet:
-                  type: string
-                cible:
-                  type: string
-                valeurAjoutee:
-                  type: string
-      responses:
-        '200':
-          description: BMC structuré
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  partenairesCles:
-                    type: string
-                  activitesCles:
-                    type: string
-                  ressourcesCles:
-                    type: string
-                  propositionsValeur:
-                    type: string
-                  relationsClients:
-                    type: string
-                  canaux:
-                    type: string
-                  segmentsClients:
-                    type: string
-                  structureCouts:
-                    type: string
-                  sourcesRevenus:
-                    type: string
-        '400':
-          description: Données incomplètes
-        '500':
-          description: Erreur serveur
-
-  /maturite-strategique:
-    post:
-      operationId: evaluerMaturiteStrategique
-      summary: Évaluer le niveau de maturité stratégique d’une organisation
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                typeOrganisation:
-                  type: string
-                  description: "Exemple : PME, startup, ONG"
-                anneeCreation:
-                  type: number
-                secteur:
-                  type: string
-      responses:
-        '200':
-          description: Score et recommandations
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  score:
-                    type: number
-                  niveau:
-                    type: string
-                  recommandations:
-                    type: array
-                    items:
-                      type: string
-        '500':
-          description: Erreur serveur
-
-  /signaux-faibles:
-    get:
-      operationId: detecterSignauxFaibles
-      summary: Identifier les signaux faibles dans un secteur donné
-      parameters:
-        - name: secteur
-          in: query
-          required: true
-          description: "Secteur d’activité à analyser"
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste de signaux faibles
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  signaux:
-                    type: array
-                    items:
-                      type: string
-        '400':
-          description: Secteur manquant
-        '500':
-          description: Erreur serveur
+          description: "Erreur serveur"
